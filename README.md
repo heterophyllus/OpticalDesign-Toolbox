@@ -18,9 +18,9 @@ _This project is just started up and work in progress._
 ## Getting Started
 1. Download
 2. addpath(genpath('path to the toolbox'));
+3. importAGF('path to AGF'); % for the first time
 
-Simple tests are contained in 'Example' folder.
-
+Simple tests are in 'Example' folder.
 
 ## License
 This project is licensed under MIT license - see the [LICENSE](LICENSE) file for details.
