@@ -29,7 +29,13 @@ classdef Field
         chiefRayDirection = [0.0, 0.0, 1.0];
         weight = 1.0;
         color = 'b';
+
+        % reference rays
+        ray1 = Ray();
+        ray2 = Ray();
+        ray3 = Ray();
     end
+
 
     methods
         function vp = applyVignettingX(self, px) 

@@ -34,6 +34,8 @@ classdef OpticalSystem < handle
         fieldCount;
         wavelengthCount; 
 
+        maxField;
+
         efl;
         fno;
     end
@@ -80,6 +82,14 @@ classdef OpticalSystem < handle
             val = self.efl/self.pupil.diameter;
         end
 
+        function val = get.maxField(self)
+            val = 0.0;
+            for i = 1 : self.fieldCount
+                if (val < self.fov.data(i).y)
+                    val = self.fov.data(i).y;
+                end
+            end
+        end
         
         function disp(self)
             % disp
@@ -192,7 +202,7 @@ classdef OpticalSystem < handle
             %
             % Not confident on this implementation, shoul search references
             %
-            eps = 0.01;
+            eps = 0.001;
     
             for f = 1:self.fieldCount
 
@@ -289,6 +299,14 @@ classdef OpticalSystem < handle
 
                 self.fov.data(f).vdx = (xum+xlm)/2;
                 self.fov.data(f).vcx = 1-(xum-xlm)/2; 
+
+                % set reference rays
+                self.fov.data(f).ray2 = raytrace(self,0.0, 1.0,f,self.wvl.primary);
+                self.fov.data(f).ray3 = raytrace(self,0.0,-1.0,f,self.wvl.primary);
+
+                self.fov.data(f).ray1 = raytrace(self,0.0, 0.0,f,self.wvl.primary);
+                % search chief ray
+                
 
             end
         end

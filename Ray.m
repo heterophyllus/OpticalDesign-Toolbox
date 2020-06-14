@@ -16,6 +16,7 @@ classdef Ray < handle
         sourceDirection = [0,0,1];
         positions = [];       % each surface including image plane
         directions = [];
+        normdirections =[];
     end
 
     properties(Dependent)
@@ -25,6 +26,9 @@ classdef Ray < handle
         l;
         m;
         n;
+        srl;
+        srm;
+        srn;
     end
 
     methods
@@ -50,19 +54,23 @@ classdef Ray < handle
         function self = reserve(self, nsurf)
             self.positions = zeros(nsurf,3);
             self.directions = zeros(nsurf,3);
+            self.normdirections = zeros(nsurf,3);
         end
 
-        function self = insert(self, atsurf, newPos=[0,0,0], newDir=[0,0,1])
+        function self = insert(self, atsurf, newPos=[0,0,0], newDir=[0,0,1], newNormDir=[0,0,1])
             self.positions(atsurf,:) = newPos;
             self.directions(atsurf,:) = newDir;
+            self.normdirections(atsurf,:) = newNormDir;
         end
 
-        function self = append(self, newPos=[0,0,0], newDir=[0,0,1])
+        function self = append(self, newPos=[0,0,0], newDir=[0,0,1],newNormDir=[0,0,1])
             %fprintf('Call Ray.append\n');
             cur = self.positions;
             self.positions = vertcat(cur,newPos);
             cur = self.directions;
             self.directions= vertcat(cur,newDir);
+            cur = self.normdirections;
+            self.normdirections= vertcat(cur,newNormDir);
         end
 
         function vec = get.x(self)
@@ -87,6 +95,38 @@ classdef Ray < handle
 
         function vec = get.n(self)
             vec = self.directions(:,3);
+        end
+
+        function vec = get.srl(self)
+            vec = self.normdirections(:,1);
+        end
+
+        function vec = get.srm(self)
+            vec = self.normdirections(:,2);
+        end
+
+        function vec = get.srn(self)
+            vec = self.normdirections(:,3);
+        end
+
+        function val = aoi(self,n)
+            
+            if n == 1
+                dirin = self.sourceDirection;
+            else
+                dirin = self.directions(n-1,:);
+            end
+            snorm = -self.normdirections(n,:);
+            cosI = dot(dirin, snorm) / ( norm(dirin)*norm(snorm) );
+            val = acos(cosI);
+
+        end
+
+        function val = aor(self, n)
+            dirout = self.directions(n,:);
+            snorm = -self.normdirections(n,:);
+            cosId = dot(dirout, snorm) / ( norm(dirout)*norm(snorm) );
+            val = acos(cosId);
         end
 
     end % methods end

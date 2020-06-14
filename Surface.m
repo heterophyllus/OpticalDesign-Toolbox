@@ -51,7 +51,7 @@ classdef Surface < handle
         end
 
         function zval = sag(self, h)
-            if self.shape == 'SPH'
+            if strcmp(self.shape, 'SPH')
                 r = self.radius;
                 if r == Inf % flat 
                     zval = zeros(size(h));
@@ -132,10 +132,11 @@ classdef Surface < handle
             end
             pathPR = pathPQ + pathQR; % total path from P to R
             pt = posQ + pathQR.*dir0;
+            
         end
 
 
-        function [dirout] = refract(self, pt, dirin, nin, nout)
+        function [dirout,snorm] = refract(self, pt, dirin, nin, nout)
             % refract
             % compute direction cosine after refraction
             %
@@ -147,10 +148,12 @@ classdef Surface < handle
 
             mu = nin/nout;
 
+            snorm = self.surfnorm(pt); % surface norm
+
             if mu == 1.0 % pass through
                 dirout = dirin;
             else
-                snorm = self.surfnorm(pt); % surface norm
+                %snorm = self.surfnorm(pt); 
                 a = mu*( dot(snorm,dirin)/sum(snorm.^2) );
                 b = (mu^2-1)/( sum(snorm.^2) );
                 f = @(lambda) lambda^2 + 2*a*lambda + b;
@@ -162,6 +165,8 @@ classdef Surface < handle
 
         end
 
+        %varargout{1} = dirout;
+        %varargout{2} = snorm;
 
     end % method end
 end
